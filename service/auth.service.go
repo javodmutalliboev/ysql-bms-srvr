@@ -20,6 +20,18 @@ var Tokens []string
 
 func Login() func(c *gin.Context) {
 	return func(c *gin.Context) {
+		if user, err := c.Cookie("user"); err == nil {
+			log.Printf("alredy logged in: user: %s\n", user)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+			return
+		}
+
+		if token, err := c.Cookie("token"); err == nil {
+			log.Printf("alredy logged in: token: %s\n", token)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Bad Request"})
+			return
+		}
+
 		var requestBody _type.User
 
 		if err := c.ShouldBind(&requestBody); err != nil {
