@@ -43,7 +43,7 @@ func Login() func(c *gin.Context) {
 		data, err := AuthenticateUser(_type.User{Email: requestBody.Email, Password: requestBody.Password})
 		if err != nil {
 			log.Println(err)
-			c.String(http.StatusNotImplemented, err.Error())
+			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
 

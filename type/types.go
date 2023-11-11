@@ -18,3 +18,5 @@ type AuthenticationResult struct {
 	LastName  string `json:"last_name"`
 	Role      string `json:"role"`
 }
+
+type EuList []string
