@@ -3,7 +3,6 @@ package service
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	funcs "ysql-bms/func"
 	_type "ysql-bms/type"
@@ -14,37 +13,40 @@ func GetExistingEmailList() func(c *gin.Context) {
 		psqlInfo, err := funcs.PsqlInfo()
 
 		if err != nil {
-			log.Printf("An error occurrred: %v.", err)
-			c.String(http.StatusInternalServerError, "An error occurred.")
+			funcs.ErrorResponse(c, err)
 			return
 		}
 
-		db, err := sql.Open("postgres", psqlInfo)
+		euList, err := GetExistingEmailListDB(psqlInfo)
 		if err != nil {
-			log.Printf("An error occurrred: %v.", err)
-			c.String(http.StatusInternalServerError, "An error occurred.")
+			funcs.ErrorResponse(c, err)
 			return
 		}
-		defer db.Close()
-		sqlStatement := `SELECT email FROM public.user`
-		rows, err := db.Query(sqlStatement)
-		if err != nil {
-			log.Printf("An error occurrred: %v.", err)
-			c.String(http.StatusInternalServerError, "An error occurred.")
-			return
-		}
-		defer rows.Close()
-		var euList _type.EuList
-		for rows.Next() {
-			var email string
-			err = rows.Scan(&email)
-			if err != nil {
-				log.Printf("An error occurrred: %v.", err)
-				c.String(http.StatusInternalServerError, "An error occurred.")
-				return
-			}
-			euList = append(euList, email)
-		}
+
 		c.JSON(http.StatusOK, euList)
 	}
+}
+
+func GetExistingEmailListDB(psqlInfo string) (_type.EuList, error) {
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		return nil, err
+	}
+	defer db.Close()
+	sqlStatement := `SELECT email FROM public.user`
+	rows, err := db.Query(sqlStatement)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var euList _type.EuList
+	for rows.Next() {
+		var email string
+		err = rows.Scan(&email)
+		if err != nil {
+			return nil, err
+		}
+		euList = append(euList, email)
+	}
+	return euList, nil
 }

@@ -19,7 +19,7 @@ func routes() {
 	router.Use(cors.New(config))
 
 	router.POST("/login", service.Login())
-	router.POST("/signup", service.Signup())
+	router.POST("/sendEmail", service.SendEmail())
 	router.GET("/euList", service.GetExistingEmailList())
 
 	err := router.Run("localhost:3000")
