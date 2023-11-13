@@ -1,6 +1,7 @@
 package funcs
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -87,3 +88,18 @@ func VerifyJWT(tokenString string, vCode int) error {
 
 	return nil
 }
+
+func (s *NullString) Scan(value interface{}) error {
+	if value == nil {
+		*s = ""
+		return nil
+	}
+	strVal, ok := value.(string)
+	if !ok {
+		return errors.New("Column is not a string")
+	}
+	*s = NullString(strVal)
+	return nil
+}
+
+type NullString string

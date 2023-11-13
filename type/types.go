@@ -1,6 +1,9 @@
 package _type
 
-import "github.com/golang-jwt/jwt/v4"
+import (
+	"database/sql"
+	"github.com/golang-jwt/jwt/v4"
+)
 
 type User struct {
 	Email    string `json:"email" binding:"required"`
@@ -13,10 +16,10 @@ type Claims struct {
 }
 
 type AuthenticationResult struct {
-	Email     string `json:"email"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Role      string `json:"role"`
+	Email     sql.NullString `json:"email"`
+	FirstName sql.NullString `json:"first_name"`
+	LastName  sql.NullString `json:"last_name"`
+	Role      sql.NullString `json:"role"`
 }
 
 type EuList []string

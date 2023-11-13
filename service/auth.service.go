@@ -16,8 +16,6 @@ import (
 	_type "ysql-bms/type"
 )
 
-var Tokens []string
-
 func Login() func(c *gin.Context) {
 	return func(c *gin.Context) {
 		if user, err := c.Cookie("user"); err == nil {
@@ -48,10 +46,9 @@ func Login() func(c *gin.Context) {
 		}
 
 		token, _ := GenerateJWT(data.Email)
-		Tokens = append(Tokens, token)
 
 		https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
-		user, err := json.Marshal(map[string]string{"email": data.Email, "first_name": data.FirstName, "last_name": data.LastName, "role": data.Role})
+		user, err := json.Marshal(map[string]string{"email": data.Email.String, "first_name": data.FirstName.String, "last_name": data.LastName.String, "role": data.Role.String})
 		c.SetCookie("token", token, 3600, "/", os.Getenv("DOMAIN"), https, true)
 		c.SetCookie("user", string(user), 3600, "/", os.Getenv("DOMAIN"), https, false)
 		c.JSON(http.StatusOK, gin.H{"login": "success"})
@@ -70,8 +67,9 @@ func AuthenticateUser(user _type.User) (_type.AuthenticationResult, error) {
 	defer db.Close()
 	sqlStatement := `SELECT * FROM public.user WHERE email = $1`
 	row := db.QueryRow(sqlStatement, user.Email)
-	var email, first_name, last_name, role, password string
-	switch err := row.Scan(&email, &first_name, &last_name, &role, &password); err {
+	var email, first_name, last_name, role, password sql.NullString
+	err = row.Scan(&email, &first_name, &last_name, &role, &password)
+	switch err {
 	case sql.ErrNoRows:
 		return _type.AuthenticationResult{}, err
 	case nil:
@@ -82,19 +80,20 @@ func AuthenticateUser(user _type.User) (_type.AuthenticationResult, error) {
 			return _type.AuthenticationResult{}, errors.New("unauthenticated")
 		}
 	default:
+		log.Println(email, first_name, last_name, role, password)
 		return _type.AuthenticationResult{}, err
 	}
 }
 
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+func CheckPasswordHash(password string, hash sql.NullString) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash.String), []byte(password))
 	return err == nil
 }
 
-func GenerateJWT(email string) (string, error) {
+func GenerateJWT(email sql.NullString) (string, error) {
 	expirationTime := time.Now().Add(60 * time.Minute)
 	claims := &_type.Claims{
-		Email: email,
+		Email: email.String,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
