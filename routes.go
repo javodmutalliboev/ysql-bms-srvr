@@ -21,6 +21,8 @@ func routes() {
 	router.POST("/login", service.Login())
 	router.POST("/sendEmail", service.SendEmail())
 	router.GET("/euList", service.GetExistingEmailList())
+	router.POST("/verifyCode", service.VerifyCode())
+	router.POST("/submitPassword", service.SubmitPassword())
 
 	err := router.Run("localhost:3000")
 	if err != nil {

@@ -40,7 +40,8 @@ func SendEmail() func(c *gin.Context) {
 			}
 		}
 
-		message := "Subject: [Book Management System] Email Verification Code\n\n" + "Your verification code is " + strconv.Itoa(funcs.GenerateRandomNumber()) + "."
+		vCode := funcs.GenerateRandomNumber()
+		message := "Subject: [Book Management System] Email Verification Code\n\n" + "Your verification code is " + strconv.Itoa(vCode) + "."
 		err = funcs.SendVerificationCode(requestBody.Email, message)
 
 		if err != nil {
@@ -48,11 +49,10 @@ func SendEmail() func(c *gin.Context) {
 			return
 		}
 
-		token, _ := GenerateJWT(requestBody.Email)
-		Tokens = append(Tokens, token)
+		token, _ := funcs.GenerateJWT2(requestBody.Email, vCode)
 
 		https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
-		c.SetCookie("signupToken", token, 3600, "/signup", os.Getenv("DOMAIN"), https, true)
+		c.SetCookie("signupToken", token, 3600, "/", os.Getenv("DOMAIN"), https, true)
 
 		c.JSON(http.StatusOK, gin.H{"verification code send": "success"})
 	}

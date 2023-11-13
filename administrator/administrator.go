@@ -1,48 +1,44 @@
-package main
+package administrator
 
 import (
 	"database/sql"
 	"fmt"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 	"log"
-	"os"
-	"reflect"
-	"strconv"
 )
 
 func practice() {
 	fmt.Println("working")
 }
 
-func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-		return
-	}
-
-	//port, _ := strconv.Atoi(os.Getenv("PORT"))
-	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-	//	"password=%s dbname=%s sslmode=disable",
-	//	os.Getenv("HOST"), port, os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
-
-	//createAdminUser(psqlInfo)
-	password := os.Getenv("ADMINPASSWORD")
-
-	hash, _ := HashPassword(password)
-
-	fmt.Println("Password:", password)
-	fmt.Println("Hash:    ", hash)
-
-	match := CheckPasswordHash(password, "$2a$14$xS8Q71gH.jNbR5A/0vvUreip0z0gxbuFdwU8dTH4p1kahlPRWmBy.")
-	fmt.Println("Match:   ", match)
-
-	//editAdminUser(psqlInfo, hash)
-	https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
-	log.Println(reflect.TypeOf(https))
-}
+//func Lain() {
+//	err := godotenv.Load()
+//	if err != nil {
+//		log.Fatalf("Error loading .env file")
+//		return
+//	}
+//
+//	//port, _ := strconv.Atoi(os.Getenv("PORT"))
+//	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+//	//	"password=%s dbname=%s sslmode=disable",
+//	//	os.Getenv("HOST"), port, os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
+//
+//	//createAdminUser(psqlInfo)
+//	password := os.Getenv("ADMINPASSWORD")
+//
+//	hash, _ := HashPassword(password)
+//
+//	fmt.Println("Password:", password)
+//	fmt.Println("Hash:    ", hash)
+//
+//	match := CheckPasswordHash(password, "$2a$14$xS8Q71gH.jNbR5A/0vvUreip0z0gxbuFdwU8dTH4p1kahlPRWmBy.")
+//	fmt.Println("Match:   ", match)
+//
+//	//editAdminUser(psqlInfo, hash)
+//	https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
+//	log.Println(reflect.TypeOf(https))
+//}
 
 func HashPassword(password string) (string, error) {
 	log.Println(password)
