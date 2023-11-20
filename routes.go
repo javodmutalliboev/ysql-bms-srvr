@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"os"
 	"ysql-bms/service"
+	"ysql-bms/subroutes"
 )
 
 func routes() {
@@ -23,6 +24,14 @@ func routes() {
 	router.GET("/euList", service.GetExistingEmailList())
 	router.POST("/verifyCode", service.VerifyCode())
 	router.POST("/submitPassword", service.SubmitPassword())
+
+	administrator := router.Group("/administrator")
+	{
+		administrator.GET("/users", func(c *gin.Context) {
+			c.String(200, "get users working")
+		})
+	}
+	router.Use(subroutes.SubRoutes(router))
 
 	err := router.Run("localhost:3000")
 	if err != nil {
