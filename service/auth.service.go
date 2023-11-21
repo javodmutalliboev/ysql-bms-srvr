@@ -45,7 +45,7 @@ func Login() func(c *gin.Context) {
 			return
 		}
 
-		token, _ := GenerateJWT(data.Email)
+		token, _ := GenerateJWT(data.Email, data.Role)
 
 		https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
 		user, err := json.Marshal(map[string]string{"email": data.Email.String, "first_name": data.FirstName.String, "last_name": data.LastName.String, "role": data.Role.String})
@@ -90,10 +90,11 @@ func CheckPasswordHash(password string, hash sql.NullString) bool {
 	return err == nil
 }
 
-func GenerateJWT(email sql.NullString) (string, error) {
+func GenerateJWT(email sql.NullString, role sql.NullString) (string, error) {
 	expirationTime := time.Now().Add(60 * time.Minute)
 	claims := &_type.Claims{
 		Email: email.String,
+		Role:  role.String,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -103,4 +104,33 @@ func GenerateJWT(email sql.NullString) (string, error) {
 
 	return token.SignedString([]byte(os.Getenv("JWTKEY")))
 
+}
+
+func AuthAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token, err := c.Cookie("token")
+		if err != nil {
+			funcs.ErrorResponse(c, err)
+			c.Abort()
+			return
+		}
+
+		tokenParsed, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("JWTKEY")), nil
+		})
+		if err != nil {
+			funcs.ErrorResponse(c, err)
+			c.Abort()
+			return
+		}
+
+		claims := tokenParsed.Claims.(jwt.MapClaims)
+		role := claims["role"].(string)
+		if role != "administrator" {
+			funcs.ErrorResponse(c, errors.New("unauthorized"))
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
 }

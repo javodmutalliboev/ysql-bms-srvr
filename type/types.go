@@ -11,7 +11,8 @@ type User struct {
 }
 
 type Claims struct {
-	Email string `json:"emil"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
 	jwt.RegisteredClaims
 }
 
