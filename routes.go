@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"os"
 	"ysql-bms/service"
+	AdministratorService "ysql-bms/service/administrator"
 )
 
 func routes() {
@@ -26,9 +27,7 @@ func routes() {
 
 	administrator := router.Group("/administrator")
 	{
-		administrator.GET("/users", service.AuthAdmin(), func(c *gin.Context) {
-			c.JSON(200, gin.H{"message": "get administrator users is working"})
-		})
+		administrator.GET("/users", service.AuthAdmin(), AdministratorService.GetUsers())
 	}
 
 	err := router.Run("localhost:3000")
