@@ -134,3 +134,34 @@ func AuthAdmin() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func Logout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		https, _ := strconv.ParseBool(os.Getenv("HTTPS"))
+		c.SetCookie("token", "", -1, "/", os.Getenv("DOMAIN"), https, true)
+		c.SetCookie("user", "", -1, "/", os.Getenv("DOMAIN"), https, false)
+		c.JSON(http.StatusOK, gin.H{"logout": "success"})
+	}
+}
+
+func AuthUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token, err := c.Cookie("token")
+		if err != nil {
+			funcs.ErrorResponse(c, err)
+			c.Abort()
+			return
+		}
+
+		_, err = jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+			return []byte(os.Getenv("JWTKEY")), nil
+		})
+		if err != nil {
+			funcs.ErrorResponse(c, err)
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}

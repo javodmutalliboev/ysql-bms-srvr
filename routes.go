@@ -30,6 +30,8 @@ func routes() {
 		administrator.GET("/users", service.AuthAdmin(), AdministratorService.GetUsers())
 	}
 
+	router.GET("/logout", service.AuthUser(), service.Logout())
+
 	err := router.Run("localhost:3000")
 	if err != nil {
 		panic(err)
