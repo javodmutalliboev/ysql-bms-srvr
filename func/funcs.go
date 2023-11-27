@@ -3,8 +3,6 @@ package funcs
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v4"
 	"log"
 	"math/rand"
 	"net/http"
@@ -12,6 +10,9 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func PsqlInfo() (string, error) {
@@ -23,7 +24,7 @@ func PsqlInfo() (string, error) {
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
-		os.Getenv("HOST"), port, os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
+		os.Getenv("HOST"), port, os.Getenv("DBUSER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
 
 	return psqlInfo, nil
 }

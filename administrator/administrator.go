@@ -3,9 +3,10 @@ package administrator
 import (
 	"database/sql"
 	"fmt"
+	"log"
+
 	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 )
 
 func practice() {
@@ -22,7 +23,7 @@ func practice() {
 //	//port, _ := strconv.Atoi(os.Getenv("PORT"))
 //	//psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 //	//	"password=%s dbname=%s sslmode=disable",
-//	//	os.Getenv("HOST"), port, os.Getenv("USER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
+//	//	os.Getenv("HOST"), port, os.Getenv("DBUSER"), os.Getenv("PASSWORD"), os.Getenv("DBNAME"))
 //
 //	//createAdminUser(psqlInfo)
 //	password := os.Getenv("ADMINPASSWORD")
