@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 	"os"
 	"ysql-bms/service"
 	AdministratorService "ysql-bms/service/administrator"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func routes() {
@@ -24,6 +25,7 @@ func routes() {
 	router.GET("/euList", service.GetExistingEmailList())
 	router.POST("/verifyCode", service.VerifyCode())
 	router.POST("/submitPassword", service.SubmitPassword())
+	router.POST("/forgotPassword", service.ForgotPassword())
 
 	administrator := router.Group("/administrator")
 	{
